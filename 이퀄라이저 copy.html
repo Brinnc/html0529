@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이퀄라이저만들기</title>
+    <script src="../js/lib.js"></script>
+    <style>
+        body{
+            margin-top: 0%;
+            margin-left: 0%;
+        }
+    </style>
+    <script>
+        let wrapper; //wrapper의 전역변수화
+        let width = 20; //각 bar의 너비
+        let height = width * 4; //각 bar의 높이
+        let barCount = 100; //만들고 싶은 바의 수 
+        let a=0.1; //막대의 비율계수
+        let textbox; 
+
+        //바의 색상에 대한 배열
+        let colorArray=["red", "orange", "yellow", "limegreen", "blue", "midnightblue", "blueviolet", "pink", "lavender", "lightskyblue"]; 
+
+        let barArray=[];
+
+
+
+        //0)
+        //사각형들을 담게될 wrapper 생성
+        function createWrapper() {
+            wrapper = document.createElement("div");
+            wrapper.style.width = barCount * width + "px";
+            wrapper.style.height = height + "px";
+            wrapper.style.margin = "auto";
+            wrapper.style.transform="rotate(180deg)";
+            //wrapper.style.background = "";
+
+            wrapper.style.position="relative"; //자식때문에 포지션 명시함
+
+            document.body.appendChild(wrapper);
+        }
+
+        //1)
+        //이퀄라이저에 사용될 막대를 정의함
+        class Bar { //장차 막대를 생성할 틀
+            constructor(bg, x, targetH) { //막대가 어떠한 모습으로 태어날지 그 스타일을 초기화할 생성자 메서드
+                this.div;
+                this.bg=bg;
+                this.x=x; //바가 태어날때 부착될 x좌표
+                this.targetH=targetH;
+
+                this.div = document.createElement("div");
+                this.div.style.width = width + "px";
+                this.div.style.height = height + "px";
+                this.div.style.background=bg;
+
+                this.div.style.position="absolute";
+                this.div.style.left=this.x+"px";
+
+                wrapper.appendChild(this.div);
+
+            }
+
+            //막대의 움직임을 정의하는 매서드
+            move(){
+                this.div.style.height = parseFloat(this.div.style.height)+a*(this.targetH-parseFloat(this.div.style.height)) + "px";
+
+            }
+
+        }
+
+        //내가 생성하고픈 수 만큼 바를 생성한다 new를 여러번하면 됨
+        function createBar(){
+            for(let i=0; i<barCount; i++){
+                let r = getRandom(colorArray.length);
+                let h= getRandom(height+1); //0~바의 높이
+
+                let bar=new Bar(colorArray[r], i*width, h); //i와 비례, 50은 width에 근거
+                barArray.push(bar); //생성된 막대를 배열에 추가하기
+            }
+        }
+
+        function loop(){
+            //모든 사각형을 대상으로 targetH를 변하게 하지말고 
+            //현재 loop의 턴에서 사각형 중 하나만 골라 targetH를 변경함(어느 사각형을  골라야할지는 컴퓨터인 랜덤에 맡김)
+            let index=getRandom(barArray.length);
+            barArray[index].targetH=getRandom(height+1);
+
+            //문서 내 존재하는 모든 바들을 대상으로 무브를 호출
+            for(let i=0; i<barArray.length; i++){
+                barArray[i].move();
+                //barArray[i].targetH=getRandom(height+1);
+                
+            }
+        }
+
+        //0)
+        function init() {
+            createWrapper();
+            createBar();
+
+            textbox=document.getElementById("textbox");
+
+        }
+
+        //0)
+        addEventListener("load", function () {
+            //막대를 원하는 수만큼 생성하고, 그 막대를 감쌀 wrapper도 생성하며 크기도 지정
+            init();
+
+            setInterval("loop()", 1);
+        });
+
+    </script>
+</head>
+
+<body>
+    <input id=textbox type="text" placeholder="막대 갯수">
+    <button onClick="">OK!</button>
+</body>
+
+</html>

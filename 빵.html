@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        let bulletArray=[]; //생성된 총알을 보관한 전역변수
+        let colorArray=["red", "orange", "yellow", "green", "blue", "navy", "purple"];
+
+        class Bullet{
+            //생성자 메서드
+            constructor(y, c){ //총알이 보유한 멤버변수
+                this.x=0; 
+                this.y=y;
+                this.color=c;
+
+                this.div=document.createElement("div");
+                this.div.style.width=50+"px";
+                this.div.style.height=20+"px";
+
+                this.div.style.position="absolute";
+                this.div.style.top=this.y+"px";
+                this.div.style.left=-+"px";
+
+                this.div.style.background=this.color;
+
+                document.body.appendChild(this.div);
+            }
+            
+            //클래스 내 메서드, function 붙이지 않음
+            move(){
+                this.x=this.x+5;
+                this.div.style.left=this.x+"px";
+            }
+
+        }
+
+        function fire(){
+            let r=parseInt(Math.random()*(400+1));
+            let c=parseInt(Math.random()*colorArray.length);
+
+            let b=new Bullet(r, colorArray[c]);
+            bulletArray.push(b);
+        }
+
+        function loop(){
+            for(let i=0; i<bulletArray.length; i++){
+                bulletArray[i].move();
+            }
+        }
+
+
+        addEventListener("load", function(){
+            document.querySelector("button").addEventListener("click", function(){
+                fire();
+            });
+
+            setInterval("loop()", 10);
+
+        });
+    </script>
+</head>
+<body>
+    <button>발사</button>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공바운드효과</title>
+    <style>
+        #wrapper {
+            width: 500px;
+            height: 500px;
+            background: darkgreen;
+            margin: auto;
+            position: relative;
+            overflow: hidden;
+            border: 10px solid burlywood;
+        }
+    </style>
+    <script src="../js/lib.js"></script>
+    <script>
+        let wrapper;
+        let ballArray = []; //생성되는 모든 볼을 담게될 1차원 배열
+        let colorArray = ["red", "yellow", "orange", "green", "blue", "midnightblue", "purple"]; //볼의 색상에 대한 배열
+        let index=0;
+
+        let flag = true;
+
+        //1)
+        //다수의 공을 생성할 예정이므로 클래스로 정의함
+        class Ball {
+            constructor(velX, velY, bg) { //생성자
+                this.div; //멤버변수
+                this.x = 0;
+                this.y = 0;
+                this.velX = velX;
+                this.velY = velY;
+                this.bg=bg;
+
+                this.div = document.createElement("div");
+                this.div.style.width = 25 + "px";
+                this.div.style.height = 25 + "px";
+                this.div.style.background = this.bg;
+                this.div.style.borderRadius = 50 + "%";
+
+                this.div.style.fontSize=20+"px";
+                this.div.style.fontWeight="bold";
+
+                this.div.style.position = "absolute";
+                this.div.style.left = 0 + "px";
+                this.div.style.top = 0 + "px";
+
+                //wrapper에 볼 추가
+                wrapper.appendChild(this.div);
+
+            }
+
+            //볼 움직임
+            move() {
+                //x,y값의 속도
+                this.x = this.x + this.velX;
+                this.y = this.y + this.velY;
+
+                this.div.style.left = this.x + "px";
+                this.div.style.top = this.y + "px";
+
+                //좌표 출력
+                //this.div.innerText = this.x + "," + this.y;
+
+                //x축 관련하여 속도를 바꿀 경우  
+                //this.velX = -this.velX
+                if (this.x >= 500 - 25) { //1) 우측 한계점을 넘어설 때 : this.x>=500-25
+                    this.velX = -this.velX
+                } else if (this.x <= 0) { //2) 좌측 한계점을 넘어설 때 : this.x<=0
+                    this.velX = -this.velX
+                }
+
+                //y축 관련하여 속도를 바꿀 경우
+                if (this.y >= 500 - 25) { //1) y축 아래쪽 한계점을 넘어설 때: this.y >=500-25
+                    this.velY = -this.velY
+                } else if (this.y <= 0) { //2) y축 위쪽 한계점을 넘어설 때: this.y <=0
+                    this.velY = -this.velY
+                }
+                
+            }
+        }
+
+        //2)
+        function createBall() {
+            let velX = getRandomByRange(1, 30);
+            let velY = getRandomByRange(1, 30);
+            let c=getRandom(colorArray.length);
+
+            ballArray.push(new Ball(velX, velY, colorArray[c]));
+
+        }
+
+        function loop() {
+            //화면에 등장하는 모든 볼을 대상으로(배열의 크기만큼), 반복문 수행하면서 move 호출
+            if (flag) {
+                for (let i = 0; i < ballArray.length; i++) {
+                    ballArray[i].move();
+                    ballArray[i].div.innerText=i;
+                }
+            }
+        }
+
+        //0)
+        function init() {
+            wrapper = document.getElementById("wrapper");
+        }
+
+        //0)
+        addEventListener("load", function () {
+            init();
+
+            setInterval("loop()", 50);
+
+            //키보드에 이벤트 연결
+            document.body.addEventListener("keydown", function () {
+                console.log(event.keyCode);
+                if (event.keyCode == 32) { //스페이스바를 누르면
+                    createBall();
+                } else if (event.keyCode == 27) {
+                    flag = !flag;
+                }
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div id="wrapper">
+
+    </div>
+</body>
+
+</html>
